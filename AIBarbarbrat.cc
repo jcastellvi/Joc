@@ -82,10 +82,10 @@ virtual void play () {
                 dist1[to.first][to.second].first.second=dist1[from.first][from.second].first.second+1;
                 dist1[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
-                if (c.type==CITY and ciutat.first==-1) ciutat=to;
-                else if (c.type==PATH and cami.first==-1) cami=to;
+                if (c.type==CITY and ciutat.first==-1 and city_owner(c.city_id)!=me()) ciutat=to;
+                else if (c.type==PATH and cami.first==-1 and city_owner(c.path_id)!=me()) cami=to;
                 if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
-                    if (depredador.first==-1 and unit(c.unit_id).health>vida+dist+cost(cell(posx, posy).type)-cost(c.type))
+                    if (depredador.first==-1 and unit(c.unit_id).health>=vida+dist+cost(cell(posx, posy).type)-cost(c.type))
                         depredador=to;
                     else if (presa.first==-1 and unit(c.unit_id).health<vida-dist)
                         presa=to;
@@ -101,36 +101,46 @@ virtual void play () {
         while (!q.empty()) q.pop();
         
         if (depredador.first!=-1) {
-            if (posx>=depredador.first and cell(posx+1, posy).type!=WATER)
+            if (posx>depredador.first and cell(posx+1, posy).type!=WATER and (cell(posx+1, posy).unit_id == -1 or unit(cell(posx+1, posy).unit_id).player != me()))
                 execute(Command(cell(posx, posy).unit_id, BOTTOM));
-            else if (posx<=depredador.first and cell(posx-1, posy).type!=WATER)
+            else if (posx<depredador.first and cell(posx-1, posy).type!=WATER and (cell(posx-1, posy).unit_id == -1 or unit(cell(posx-1, posy).unit_id).player != me()))
                 execute(Command(cell(posx, posy).unit_id, TOP));
-            else if (posy>=depredador.second and cell(posx, posy+1).type!=WATER)
+            else if (posy>depredador.second and cell(posx, posy+1).type!=WATER and (cell(posx, posy+1).unit_id == -1 or unit(cell(posx, posy+1).unit_id).player != me()))
                 execute(Command(cell(posx, posy).unit_id, RIGHT));
-            else if (posy<=depredador.second and cell(posx, posy-1).type!=WATER)
-                execute(Command(cell(posx, posy).unit_id, LEFT));
-        }
-        else if (presa.first!=-1) {
-            if (posx<presa.first and cell(posx+1, posy).type!=WATER)
-                execute(Command(cell(posx, posy).unit_id, BOTTOM));
-            else if (posx>presa.first and cell(posx-1, posy).type!=WATER)
-                execute(Command(cell(posx, posy).unit_id, TOP));
-            else if (posy<presa.second and cell(posx, posy+1).type!=WATER)
-                execute(Command(cell(posx, posy).unit_id, RIGHT));
-            else if (posy>presa.second and cell(posx, posy-1).type!=WATER)
+            else if (posy<depredador.second and cell(posx, posy-1).type!=WATER and (cell(posx, posy-1).unit_id == -1 or unit(cell(posx, posy-1).unit_id).player != me()))
                 execute(Command(cell(posx, posy).unit_id, LEFT));
             else {
-                if (posx<=presa.first and cell(posx+1, posy).type!=WATER)
+                if (posx>=depredador.first and cell(posx+1, posy).type!=WATER and (cell(posx+1, posy).unit_id == -1 or unit(cell(posx+1, posy).unit_id).player != me()))
                     execute(Command(cell(posx, posy).unit_id, BOTTOM));
-                else if (posx>=presa.first and cell(posx-1, posy).type!=WATER)
+                else if (posx<=depredador.first and cell(posx-1, posy).type!=WATER and (cell(posx-1, posy).unit_id == -1 or unit(cell(posx-1, posy).unit_id).player != me()))
                     execute(Command(cell(posx, posy).unit_id, TOP));
-                else if (posy<=presa.second and cell(posx, posy+1).type!=WATER)
+                else if (posy>=depredador.second and cell(posx, posy+1).type!=WATER and (cell(posx, posy+1).unit_id == -1 or unit(cell(posx, posy+1).unit_id).player != me()))
                     execute(Command(cell(posx, posy).unit_id, RIGHT));
-                else if (posy>=presa.second and cell(posx, posy-1).type!=WATER)
+                else if (posy<=depredador.second and cell(posx, posy-1).type!=WATER and (cell(posx, posy-1).unit_id == -1 or unit(cell(posx, posy-1).unit_id).player != me()))
                     execute(Command(cell(posx, posy).unit_id, LEFT));
             }
         }
-        else if (dist1[ciutat.first][ciutat.second].first.first<dist1[cami.first][cami.second].first.first) {
+        else if (presa.first!=-1) {
+            if (posx<presa.first and cell(posx+1, posy).type!=WATER and (cell(posx+1, posy).unit_id == -1 or unit(cell(posx+1, posy).unit_id).player != me()))
+                execute(Command(cell(posx, posy).unit_id, BOTTOM));
+            else if (posx>presa.first and cell(posx-1, posy).type!=WATER and (cell(posx-1, posy).unit_id == -1 or unit(cell(posx-1, posy).unit_id).player != me()))
+                execute(Command(cell(posx, posy).unit_id, TOP));
+            else if (posy<presa.second and cell(posx, posy+1).type!=WATER and (cell(posx, posy+1).unit_id == -1 or unit(cell(posx, posy+1).unit_id).player != me()))
+                execute(Command(cell(posx, posy).unit_id, RIGHT));
+            else if (posy>presa.second and cell(posx, posy-1).type!=WATER and (cell(posx, posy-1).unit_id == -1 or unit(cell(posx, posy-1).unit_id).player != me()))
+                execute(Command(cell(posx, posy).unit_id, LEFT));
+            else {
+                if (posx<=presa.first and cell(posx+1, posy).type!=WATER and (cell(posx+1, posy).unit_id == -1 or unit(cell(posx+1, posy).unit_id).player != me()))
+                    execute(Command(cell(posx, posy).unit_id, BOTTOM));
+                else if (posx>=presa.first and cell(posx-1, posy).type!=WATER and (cell(posx-1, posy).unit_id == -1 or unit(cell(posx-1, posy).unit_id).player != me()))
+                    execute(Command(cell(posx, posy).unit_id, TOP));
+                else if (posy<=presa.second and cell(posx, posy+1).type!=WATER and (cell(posx, posy+1).unit_id == -1 or unit(cell(posx, posy+1).unit_id).player != me()))
+                    execute(Command(cell(posx, posy).unit_id, RIGHT));
+                else if (posy>=presa.second and cell(posx, posy-1).type!=WATER and (cell(posx, posy-1).unit_id == -1 or unit(cell(posx, posy-1).unit_id).player != me()))
+                    execute(Command(cell(posx, posy).unit_id, LEFT));
+            }
+        }
+        else if (dist1[ciutat.first][ciutat.second].first.first<=dist1[cami.first][cami.second].first.first) {
             pair<int, int> posicio=ciutat;
             pair<int, int> ant=ciutat;
             while (dist1[posicio.first][posicio.second].second!=posicio) {
@@ -141,9 +151,9 @@ virtual void play () {
                 execute(Command(cell(posx, posy).unit_id, BOTTOM));
             else if (posx>ant.first)
                 execute(Command(cell(posx, posy).unit_id, TOP));
-            else if (posy<ant.first)
+            else if (posy<ant.second)
                 execute(Command(cell(posx, posy).unit_id, RIGHT));
-            else if (posy>ant.first)
+            else if (posy>ant.second)
                 execute(Command(cell(posx, posy).unit_id, LEFT));
         }
         else {
@@ -157,9 +167,9 @@ virtual void play () {
                 execute(Command(cell(posx, posy).unit_id, BOTTOM));
             else if (posx>ant.first)
                 execute(Command(cell(posx, posy).unit_id, TOP));
-            else if (posy<ant.first)
+            else if (posy<ant.second)
                 execute(Command(cell(posx, posy).unit_id, RIGHT));
-            else if (posy>ant.first)
+            else if (posy>ant.second)
                 execute(Command(cell(posx, posy).unit_id, LEFT));
         }
     }
