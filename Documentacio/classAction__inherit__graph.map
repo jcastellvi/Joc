@@ -1,0 +1,4 @@
+<map id="Action" name="Action">
+<area shape="rect" id="node2" href="$classPlayer.html" title="Player" alt="" coords="37,80,95,107"/>
+<area shape="rect" id="node3" href="$structPLAYER__NAME.html" title="PLAYER_NAME" alt="" coords="5,155,127,181"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="State" name="State">
+<area shape="rect" id="node2" href="$classInfo.html" title="Info" alt="" coords="51,80,95,107"/>
+<area shape="rect" id="node3" href="$classBoard.html" title="Board" alt="" coords="5,155,61,181"/>
+<area shape="rect" id="node4" href="$classPlayer.html" title="Player" alt="" coords="85,155,144,181"/>
+<area shape="rect" id="node5" href="$structPLAYER__NAME.html" title="PLAYER_NAME" alt="" coords="54,229,175,256"/>
+</map>

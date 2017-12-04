@@ -1,0 +1,4 @@
+<map id="Info" name="Info">
+<area shape="rect" id="node2" href="$classSettings.html" title="Settings" alt="" coords="5,5,76,32"/>
+<area shape="rect" id="node3" href="$classState.html" title="State" alt="" coords="101,5,154,32"/>
+</map>

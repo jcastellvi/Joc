@@ -1,0 +1,27 @@
+<map id="Defs.hh" name="Defs.hh">
+<area shape="rect" id="node2" href="$Utils_8hh.html" title="Utils.hh" alt="" coords="423,80,489,107"/>
+<area shape="rect" id="node3" href="$Structs_8hh.html" title="Structs.hh" alt="" coords="199,155,281,181"/>
+<area shape="rect" id="node22" href="$Random_8hh.html" title="Random.hh" alt="" coords="401,304,490,331"/>
+<area shape="rect" id="node24" href="$Registry_8hh.html" title="Registry.hh" alt="" coords="453,155,542,181"/>
+<area shape="rect" id="node26" href="$Utils_8cc.html" title="Utils.cc" alt="" coords="567,155,633,181"/>
+<area shape="rect" id="node4" href="$Action_8hh.html" title="Action.hh" alt="" coords="5,304,83,331"/>
+<area shape="rect" id="node15" href="$Settings_8hh.html" title="Settings.hh" alt="" coords="87,229,175,256"/>
+<area shape="rect" id="node19" href="$State_8hh.html" title="State.hh" alt="" coords="306,229,377,256"/>
+<area shape="rect" id="node21" href="$Structs_8cc.html" title="Structs.cc" alt="" coords="199,229,281,256"/>
+<area shape="rect" id="node5" href="$Action_8cc.html" title="Action.cc" alt="" coords="24,379,101,405"/>
+<area shape="rect" id="node6" href="$Player_8hh.html" title="Player.hh" alt="" coords="315,379,392,405"/>
+<area shape="rect" id="node13" href="$Board_8hh.html" title="Board.hh" alt="" coords="213,379,288,405"/>
+<area shape="rect" id="node14" href="$Board_8cc.html" title="Board.cc" alt="" coords="31,453,105,480"/>
+<area shape="rect" id="node7" href="$AIDemo_8cc.html" title="AIDemo.cc" alt="" coords="309,453,397,480"/>
+<area shape="rect" id="node8" href="$AINull_8cc.html" title="AINull.cc" alt="" coords="422,453,498,480"/>
+<area shape="rect" id="node9" href="$Game_8hh.html" title="Game.hh" alt="" coords="211,453,285,480"/>
+<area shape="rect" id="node12" href="$Player_8cc.html" title="Player.cc" alt="" coords="523,453,600,480"/>
+<area shape="rect" id="node10" href="$Game_8cc.html" title="Game.cc" alt="" coords="163,528,237,555"/>
+<area shape="rect" id="node11" href="$Main_8cc.html" title="Main.cc" alt="" coords="262,528,330,555"/>
+<area shape="rect" id="node16" href="$Info_8hh.html" title="Info.hh" alt="" coords="219,304,282,331"/>
+<area shape="rect" id="node18" href="$Settings_8cc.html" title="Settings.cc" alt="" coords="107,304,195,331"/>
+<area shape="rect" id="node17" href="$Info_8cc.html" title="Info.cc" alt="" coords="126,379,189,405"/>
+<area shape="rect" id="node20" href="$State_8cc.html" title="State.cc" alt="" coords="306,304,377,331"/>
+<area shape="rect" id="node23" href="$Random_8cc.html" title="Random.cc" alt="" coords="417,379,506,405"/>
+<area shape="rect" id="node25" href="$Registry_8cc.html" title="Registry.cc" alt="" coords="453,229,542,256"/>
+</map>

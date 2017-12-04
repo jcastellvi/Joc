@@ -1,0 +1,13 @@
+<map id="Game.hh" name="Game.hh">
+<area shape="rect" id="node2" href="$Player_8hh.html" title="Player.hh" alt="" coords="758,80,835,107"/>
+<area shape="rect" id="node29" href="$Board_8hh.html" title="Board.hh" alt="" coords="659,80,734,107"/>
+<area shape="rect" id="node3" href="$Info_8hh.html" title="Info.hh" alt="" coords="665,155,728,181"/>
+<area shape="rect" id="node26" href="$Action_8hh.html" title="Action.hh" alt="" coords="563,155,641,181"/>
+<area shape="rect" id="node27" href="$Random_8hh.html" title="Random.hh" alt="" coords="752,155,841,181"/>
+<area shape="rect" id="node28" href="$Registry_8hh.html" title="Registry.hh" alt="" coords="835,304,924,331"/>
+<area shape="rect" id="node4" href="$Settings_8hh.html" title="Settings.hh" alt="" coords="671,229,759,256"/>
+<area shape="rect" id="node25" href="$State_8hh.html" title="State.hh" alt="" coords="576,229,647,256"/>
+<area shape="rect" id="node5" href="$Structs_8hh.html" title="Structs.hh" alt="" coords="622,304,705,331"/>
+<area shape="rect" id="node6" href="$Utils_8hh.html" title="Utils.hh" alt="" coords="763,379,830,405"/>
+<area shape="rect" id="node24" href="$Defs_8hh.html" title="Defs.hh" alt="" coords="1459,453,1527,480"/>
+</map>
