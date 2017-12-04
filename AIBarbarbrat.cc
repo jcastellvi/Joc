@@ -44,9 +44,11 @@ void pinta_mapa() {
 * Play method, invoked once per each round.
 */
 virtual void play () {
+    /*
     if (round()==0) {
         pinta_mapa();
     }
+    */
     
     ent=vector<pair<int, int> > ();
     orc=vector<pair<int, int> > ();
@@ -62,7 +64,7 @@ virtual void play () {
         int vida=unit(cell(ent[i].first, ent[i].second).unit_id).health;
         int posx=ent[i].first;
         int posy=ent[i].second;
-        vector<vector<pair<int, pair<int, int> > > > dist1(rows(), vector<pair<int, pair<int, int> > > (cols(), make_pair(-1, make_pair(-1, -1))));
+        vector<vector<pair<pair<int, int>, pair<int, int> > > > dist1(rows(), vector<pair<pair<int, int>, pair<int, int> > > (cols(), make_pair(make_pair(-1,-1), make_pair(-1, -1))));
         priority_queue<pair<int, pair<pair<int, int>, pair<int, int> > > > q;
         pair<int, int> ciutat=make_pair(-1, -1);
         pair<int, int> cami=make_pair(-1, -1);
@@ -75,31 +77,91 @@ virtual void play () {
             pair<int, int> to=q.top().second.first;
             pair<int, int> from=q.top().second.second;
             q.pop();
-            if (dist1[to.first][to.second].first==-1) {
-                dist1[to.first][to.second].first=dist;
+            if (dist1[to.first][to.second].first.first==-1) {
+                dist1[to.first][to.second].first.first=dist;
+                dist1[to.first][to.second].first.second=dist1[from.first][from.second].first.second+1;
                 dist1[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
-                if (c.type==CITY and ciutat.first==-1) ciutat=make_pair(to.first, to.second);
-                else if (c.type==PATH and cami.first==-1) cami=make_pair(to.first, to.second);
+                if (c.type==CITY and ciutat.first==-1) ciutat=to;
+                else if (c.type==PATH and cami.first==-1) cami=to;
                 if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
-                    if (depredador.first==-1 and unit(c.unit_id).health>vida+dist+cost(cell(ent[i].first, ent[i].second).type)-cost(c.type))
-                        depredador=make_pair(to.first, to.second);
+                    if (depredador.first==-1 and unit(c.unit_id).health>vida+dist+cost(cell(posx, posy).type)-cost(c.type))
+                        depredador=to;
                     else if (presa.first==-1 and unit(c.unit_id).health<vida-dist)
-                        presa=make_pair(to.first, to.second);
+                        presa=to;
                 }
                 for (int k=0; k<4; ++k) {
-                    if (to.first+dirx[k]>=0 and to.first+dirx[k]<rows() and to.second+diry[k]>=0 and to.second+diry[k]<cols() and dist1[to.first+dirx[k]][to.second+diry[k]].first==-1 and cell(to.first+dirx[k], to.second+diry[k]).type!=WATER) {
+                    if (to.first+dirx[k]>=0 and to.first+dirx[k]<rows() and to.second+diry[k]>=0 and to.second+diry[k]<cols() and dist1[to.first+dirx[k]][to.second+diry[k]].first.first==-1 and cell(to.first+dirx[k], to.second+diry[k]).type!=WATER) {
                         q.push(make_pair(-(dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type)), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
             }
-            if (ciutat.first!=-1 and cami.first!=-1 and ((presa.first!=-1 or dist>15) and (depredador.first!=-1 or dist>8))) seguir=false;
+            if (ciutat.first!=-1 and cami.first!=-1 and ((presa.first!=-1 or dist1[to.first][to.second].first.second>10) and (depredador.first!=-1 or dist1[to.first][to.second].first.second>=3))) seguir=false;
         }
         while (!q.empty()) q.pop();
-            
-        vector<vector<pair<int, pair<int, int> > > > dist2(rows(), vector<pair<int, pair<int, int> > > (cols(), make_pair(-1, make_pair(-1, -1))));
-        q.push(make_pair(0, make_pair(make_pair(posx, posy), make_pair(posx, posy))));
-        q.push(make_pair(0, make_pair(make_pair(posx, posy), make_pair(posx, posy))));
+        
+        if (depredador.first!=-1) {
+            if (posx>=depredador.first and cell(posx+1, posy).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, BOTTOM));
+            else if (posx<=depredador.first and cell(posx-1, posy).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, TOP));
+            else if (posy>=depredador.second and cell(posx, posy+1).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, RIGHT));
+            else if (posy<=depredador.second and cell(posx, posy-1).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, LEFT));
+        }
+        else if (presa.first!=-1) {
+            if (posx<presa.first and cell(posx+1, posy).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, BOTTOM));
+            else if (posx>presa.first and cell(posx-1, posy).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, TOP));
+            else if (posy<presa.second and cell(posx, posy+1).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, RIGHT));
+            else if (posy>presa.second and cell(posx, posy-1).type!=WATER)
+                execute(Command(cell(posx, posy).unit_id, LEFT));
+            else {
+                if (posx<=presa.first and cell(posx+1, posy).type!=WATER)
+                    execute(Command(cell(posx, posy).unit_id, BOTTOM));
+                else if (posx>=presa.first and cell(posx-1, posy).type!=WATER)
+                    execute(Command(cell(posx, posy).unit_id, TOP));
+                else if (posy<=presa.second and cell(posx, posy+1).type!=WATER)
+                    execute(Command(cell(posx, posy).unit_id, RIGHT));
+                else if (posy>=presa.second and cell(posx, posy-1).type!=WATER)
+                    execute(Command(cell(posx, posy).unit_id, LEFT));
+            }
+        }
+        else if (dist1[ciutat.first][ciutat.second].first.first<dist1[cami.first][cami.second].first.first) {
+            pair<int, int> posicio=ciutat;
+            pair<int, int> ant=ciutat;
+            while (dist1[posicio.first][posicio.second].second!=posicio) {
+                ant=posicio;
+                posicio=dist1[posicio.first][posicio.second].second;
+            }
+            if (posx<ant.first)
+                execute(Command(cell(posx, posy).unit_id, BOTTOM));
+            else if (posx>ant.first)
+                execute(Command(cell(posx, posy).unit_id, TOP));
+            else if (posy<ant.first)
+                execute(Command(cell(posx, posy).unit_id, RIGHT));
+            else if (posy>ant.first)
+                execute(Command(cell(posx, posy).unit_id, LEFT));
+        }
+        else {
+            pair<int, int> posicio=cami;
+            pair<int, int> ant=cami;
+            while (dist1[posicio.first][posicio.second].second!=posicio) {
+                ant=posicio;
+                posicio=dist1[posicio.first][posicio.second].second;
+            }
+            if (posx<ant.first)
+                execute(Command(cell(posx, posy).unit_id, BOTTOM));
+            else if (posx>ant.first)
+                execute(Command(cell(posx, posy).unit_id, TOP));
+            else if (posy<ant.first)
+                execute(Command(cell(posx, posy).unit_id, RIGHT));
+            else if (posy>ant.first)
+                execute(Command(cell(posx, posy).unit_id, LEFT));
+        }
     }
     /*
     if (round() == 1) {
