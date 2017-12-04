@@ -85,9 +85,7 @@ virtual void play () {
                 if (c.type==CITY and ciutat.first==-1 and city_owner(c.city_id)!=me()) ciutat=to;
                 else if (c.type==PATH and cami.first==-1 and city_owner(c.path_id)!=me()) cami=to;
                 if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
-                    if (depredador.first==-1 and unit(c.unit_id).health>=vida+dist+cost(cell(posx, posy).type)-cost(c.type))
-                        depredador=to;
-                    else if (presa.first==-1 and unit(c.unit_id).health<vida-dist)
+                    if (presa.first==-1 and unit(c.unit_id).health<vida-dist)
                         presa=to;
                 }
                 for (int k=0; k<4; ++k) {
@@ -96,9 +94,31 @@ virtual void play () {
                     }
                 }
             }
-            if (ciutat.first!=-1 and cami.first!=-1 and ((presa.first!=-1 or dist1[to.first][to.second].first.second>10) and (depredador.first!=-1 or dist1[to.first][to.second].first.second>=3))) seguir=false;
+            if (ciutat.first!=-1 and cami.first!=-1 and (presa.first!=-1 or dist1[to.first][to.second].first.second>10)) seguir=false;
         }
         while (!q.empty()) q.pop();
+        
+        vector<vector<int> > dist2(rows(), vector<int> (cols(), -1));
+        priority_queue<pair<int, pair<int, int> > > q2;
+        q2.push(make_pair(0, make_pair(posx, posy)));
+        while (!q2.empty()) {
+            int dist=-q2.top().first;
+            pair<int, int> to=q2.top().second;
+            q2.pop();
+            if (dist2[to.first][to.second]==-1) {
+                dist2[to.first][to.second]=dist;
+                Cell c=cell(to.first, to.second);
+                if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
+                    if (depredador.first==-1 and unit(c.unit_id).health>=vida+dist)
+                        depredador=to;
+                }
+                for (int k=0; k<4; ++k) {
+                    if (abs(to.first+dirx[k]-posx)+abs(to.second+diry[k]-posy)<=3 and to.first+dirx[k]>=0 and to.first+dirx[k]<rows() and to.second+diry[k]>=0 and to.second+diry[k]<cols() and dist2[to.first+dirx[k]][to.second+diry[k]]==-1 and cell(to.first+dirx[k], to.second+diry[k]).type!=WATER) {
+                        q2.push(make_pair(-(dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type)), make_pair(to.first+dirx[k], to.second+diry[k])));
+                    }
+                }
+            }
+        }
         
         if (depredador.first!=-1) {
             if (posx>depredador.first and cell(posx+1, posy).type!=WATER and (cell(posx+1, posy).unit_id == -1 or unit(cell(posx+1, posy).unit_id).player != me()))
