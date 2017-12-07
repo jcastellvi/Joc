@@ -64,9 +64,9 @@ virtual void play () {
         }
     
     for (int i=0; i<int(ent.size()); ++i) {
-        int vida=unit(cell(ent[i].first, ent[i].second).unit_id).health;
         int posx=ent[i].first;
         int posy=ent[i].second;
+        int vida=unit(cell(posx, posy).unit_id).health;
         vector<vector<pair<pair<int, int>, pair<int, int> > > > dist1(rows(), vector<pair<pair<int, int>, pair<int, int> > > (cols(), make_pair(make_pair(-1,-1), make_pair(-1, -1))));
         priority_queue<pair<int, pair<pair<int, int>, pair<int, int> > > > q;
         pair<int, int> ciutat=make_pair(-1, -1);
@@ -113,7 +113,7 @@ virtual void play () {
                 dist2[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
                 if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
-                    if (depredador.first==-1 and unit(c.unit_id).health>=vida)
+                    if (depredador.first==-1 and ((dist==3 and unit(c.unit_id).health-cost(cell(posx, posy).type)>vida) or (dist<3 and unit(c.unit_id).health-cost(cell(posx, posy).type)>vida)))
                         depredador=to;
                 }
                 for (int k=0; k<4; ++k) {
@@ -139,11 +139,11 @@ virtual void play () {
                 dist3[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
                 if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
-                    if (presa.first==-1 and unit(c.unit_id).health<vida)
+                    if (presa.first==-1 and unit(c.unit_id).health+cost(cell(to.first, to.second).type)<vida)
                         presa=to;
                 }
                 for (int k=0; k<4; ++k) {
-                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<10 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
+                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<3 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
                         q3.push(make_pair(-(dist+1), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
