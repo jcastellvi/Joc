@@ -68,16 +68,17 @@ virtual void play () {
         int posy=ent[i].second;
         int vida=unit(cell(posx, posy).unit_id).health;
         vector<vector<pair<pair<int, int>, pair<int, int> > > > dist1(rows(), vector<pair<pair<int, int>, pair<int, int> > > (cols(), make_pair(make_pair(-1,-1), make_pair(-1, -1))));
-        priority_queue<pair<int, pair<pair<int, int>, pair<int, int> > > > q;
+        priority_queue<pair<pair<int, int>, pair<pair<int, int>, pair<int, int> > > > q;
         pair<int, int> ciutat=make_pair(-1, -1);
         pair<int, int> cami=make_pair(-1, -1);
         pair<int, int> presa=make_pair(-1, -1);
         pair<int, int> depredador=make_pair(-1, -1);
-        q.push(make_pair(0, make_pair(make_pair(posx, posy), make_pair(posx, posy))));
+        q.push(make_pair(make_pair(0, 0), make_pair(make_pair(posx, posy), make_pair(posx, posy))));
         bool seguir=true;
         if (tot_meu) seguir=false;
         while(!q.empty() and seguir) {
-            int dist=-q.top().first;
+            int dist=-q.top().first.first;
+            int pas=q.top().first.second;
             pair<int, int> to=q.top().second.first;
             pair<int, int> from=q.top().second.second;
             q.pop();
@@ -86,11 +87,11 @@ virtual void play () {
                 dist1[to.first][to.second].first.second=dist1[from.first][from.second].first.second+1;
                 dist1[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
-                if (c.type==CITY and ciutat.first==-1 and city_owner(c.city_id)!=me()) ciutat=to;
-                else if (c.type==PATH and cami.first==-1 and path_owner(c.path_id)!=me()) cami=to;
+                if (dist!=0 and c.type==CITY and ciutat.first==-1 and city_owner(c.city_id)!=me()) ciutat=to;
+                else if (dist!=0 and c.type==PATH and cami.first==-1 and path_owner(c.path_id)!=me()) cami=to;
                 for (int k=0; k<4; ++k) {
                     if (puc(to.first+dirx[k], to.second+diry[k]) and dist1[to.first+dirx[k]][to.second+diry[k]].first.first==-1) {
-                        q.push(make_pair(-(dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type)), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
+                        q.push(make_pair(make_pair(-(dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type)), pas-1), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
             }
@@ -113,7 +114,7 @@ virtual void play () {
                 dist2[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
                 if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
-                    if (depredador.first==-1 and ((dist==3 and unit(c.unit_id).health-cost(cell(posx, posy).type)>vida) or (dist<3 and unit(c.unit_id).health-cost(cell(posx, posy).type)>vida)))
+                    if (depredador.first==-1 and ((dist==3 and unit(c.unit_id).health-cost(cell(posx, posy).type)>vida) or (dist<3 and unit(c.unit_id).health>vida)))
                         depredador=to;
                 }
                 for (int k=0; k<4; ++k) {
@@ -143,7 +144,7 @@ virtual void play () {
                         presa=to;
                 }
                 for (int k=0; k<4; ++k) {
-                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<3 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
+                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<0 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
                         q3.push(make_pair(-(dist+1), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
@@ -153,7 +154,7 @@ virtual void play () {
         
         
         //ara es mou
-        int direccio=0; //direccio cap a on vull anar
+        int direccio=-1; //direccio cap a on vull anar
         if (tot_meu) {
             
         }
@@ -182,38 +183,34 @@ virtual void play () {
                     if (ant==make_pair(posx+dirx[k], posy+diry[k]))
                         direccio=k;
             }
-            
             if (depredador.first==-1) {
-                execute(Command(cell(posx, posy).unit_id, cap[direccio]));
+                if (direccio!=-1)
+                    execute(Command(cell(posx, posy).unit_id, cap[direccio]));
             }
-            else if (abs(posx-depredador.first)+abs(posy-depredador.second)<=abs(posx+dirx[direccio]-depredador.first)+abs(posy+diry[direccio]-depredador.second)) {
-                execute(Command(cell(posx, posy).unit_id, cap[direccio]));
+            else if (direccio!=-1 and abs(posx-depredador.first)+abs(posy-depredador.second)<=abs(posx+dirx[direccio]-depredador.first)+abs(posy+diry[direccio]-depredador.second)) {
+                    execute(Command(cell(posx, posy).unit_id, cap[direccio]));
             }
             else {
-                int alt1=(direccio+1)%4;
-                int alt2=(direccio+3)%4;
-                if (puc(posx+dirx[alt1], posy+diry[alt1]) and puc(posx+dirx[alt2], posy+diry[alt2])) {
-                    if (abs(posx-depredador.first)+abs(posy-depredador.second)>abs(posx+dirx[alt1]-depredador.first)+abs(posy+diry[alt1]-depredador.second)) {
-                        execute(Command(cell(posx, posy).unit_id, cap[alt2]));
+                if (direccio!=-1) {
+                    int direccio2=-1;
+                    int dir_cost=4;
+                    for (int k=0; k<4; ++k) {
+                        if (puc(posx+dirx[k], posy+diry[k]) and abs(posx-depredador.first)+abs(posy-depredador.second)<=abs(posx+dirx[k]-depredador.first)+abs(posy+diry[k]-depredador.second) and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                            direccio2=k;
+                            dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                        }
                     }
-                    else if (abs(posx-depredador.first)+abs(posy-depredador.second)>abs(posx+dirx[alt2]-depredador.first)+abs(posy+diry[alt2]-depredador.second)) {
-                        execute(Command(cell(posx, posy).unit_id, cap[alt1]));
-                    }
-                    else if (cost(cell(posx+dirx[alt1], posy+diry[alt1]).type)<cost(cell(posx+dirx[alt2], posy+diry[alt2]).type)) {
-                        execute(Command(cell(posx, posy).unit_id, cap[alt1]));
-                    }
-                    else {
-                        execute(Command(cell(posx, posy).unit_id, cap[alt2]));
-                    }
-                }
-                else if (puc(posx+dirx[alt1], posy+diry[alt1]) and abs(posx-depredador.first)+abs(posy-depredador.second)<=abs(posx+dirx[alt1]-depredador.first)+abs(posy+diry[alt1]-depredador.second)) {
-                    execute(Command(cell(posx, posy).unit_id, cap[alt1]));
-                }
-                else if (puc(posx+dirx[alt2], posy+diry[alt2]) and abs(posx-depredador.first)+abs(posy-depredador.second)<=abs(posx+dirx[alt2]-depredador.first)+abs(posy+diry[alt2]-depredador.second)) {
-                    execute(Command(cell(posx, posy).unit_id, cap[alt2]));
+                    execute(Command(cell(posx, posy).unit_id, cap[direccio2]));
                 }
                 else {
-                    execute(Command(cell(posx, posy).unit_id, cap[(direccio+2)%4]));
+                    int dir_cost=4;
+                    for (int k=0; k<4; ++k) {
+                        if (puc(posx+dirx[k], posy+diry[k]) and abs(posx-depredador.first)+abs(posy-depredador.second)<=abs(posx+dirx[k]-depredador.first)+abs(posy+diry[k]-depredador.second) and cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost) {
+                            direccio=k;
+                            dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                        }
+                    }
+                    execute(Command(cell(posx, posy).unit_id, cap[direccio]));
                 }
                 
             }
