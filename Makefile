@@ -34,7 +34,7 @@ ifeq ($(strip $(DEBUG)),1)
 	DEBUGFLAGS=-g
 endif
 
-CXXFLAGS = -std=c++11 -Wall -Wno-unused-variable $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE))
+CXXFLAGS = -std=c++11 -Wall -Wno-unused-variable $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE)) -fPIC
 LDFLAGS  = -std=c++11                            $(PROFILEFLAGS) $(DEBUGFLAGS) -O$(strip $(OPTIMIZE))
 
 
