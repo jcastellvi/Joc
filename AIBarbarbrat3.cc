@@ -158,7 +158,7 @@ virtual void play () {
                         presa=to;
                 }
                 for (int k=0; k<4; ++k) {
-                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<1 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
+                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<2 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
                         q3.push(make_pair(make_pair(-(dist+1), -(pes+cost(cell(to.first+dirx[k], to.second+diry[k]).type))), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
@@ -200,57 +200,112 @@ virtual void play () {
                 execute(Command(cell(posx, posy).unit_id, cap[direccio]));
             }
             else {
-                int direccio2=-1;
-                int dir_cost=4;
-                for (int k=0; k<4; ++k) {
-                    if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
-                        direccio2=k;
-                        dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                if (cell(posx, posy).type==CITY or cell(posx, posy).type==PATH) {
+                    int direccio2=-1;
+                    int dir_cost=4;
+                    for (int k=0; k<4; ++k) {
+                        if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
+                            direccio2=k;
+                            dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                        }
                     }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                    
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2!=-1)
+                        execute(Command(cell(posx, posy).unit_id, cap[direccio2]));
+                    
                 }
-                if (direccio2==-1) {
+                else {
+                    int direccio2=-1;
+                    int dir_cost=0;
                     for (int k=0; k<4; ++k) {
-                        if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                        if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
                             direccio2=k;
                             dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
                         }
-                    }                    
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                    
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2==-1) {
+                        for (int k=0; k<4; ++k) {
+                            if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                                direccio2=k;
+                                dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
+                            }
+                        }                      
+                    }
+                    if (direccio2!=-1)
+                        execute(Command(cell(posx, posy).unit_id, cap[direccio2]));
+                    
                 }
-                if (direccio2==-1) {
-                    for (int k=0; k<4; ++k) {
-                        if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
-                            direccio2=k;
-                            dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
-                        }
-                    }                      
-                }
-                if (direccio2==-1) {
-                    for (int k=0; k<4; ++k) {
-                        if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
-                            direccio2=k;
-                            dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
-                        }
-                    }                      
-                }
-                if (direccio2==-1) {
-                    for (int k=0; k<4; ++k) {
-                        if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
-                            direccio2=k;
-                            dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
-                        }
-                    }                      
-                }
-                if (direccio2==-1) {
-                    for (int k=0; k<4; ++k) {
-                        if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
-                            direccio2=k;
-                            dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
-                        }
-                    }                      
-                }
-                if (direccio2!=-1)
-                    execute(Command(cell(posx, posy).unit_id, cap[direccio2]));
-                
             }
         }
         
