@@ -118,10 +118,10 @@ virtual void play () {
                 dist2[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
                 if (c.unit_id != -1 and unit(c.unit_id).player != me()) {
-                    if (unit(c.unit_id).health>vida) {
+                    if (unit(c.unit_id).health>=vida) {
                         for (int k=0; k<4; ++k) {
                             if (abs(posx+dirx[k]-to.first)+abs(posy+diry[k]-to.second)<abs(posx-to.first)+abs(posy-to.second)){
-                                    puc_dir[k]=false;
+                                puc_dir[k]=false;
                                 if (dist<=2)
                                     segurquenopuc[k]=false;
                                 if (dist<=1)
@@ -141,10 +141,11 @@ virtual void play () {
         
         
         vector<vector<pair<int, pair<int, int> > > > dist3(rows(), vector<pair<int, pair<int, int> > > (cols(), make_pair(-1, make_pair(-1, -1))));
-        priority_queue<pair<int, pair<pair<int, int>, pair<int, int> > > > q3;
-        q3.push(make_pair(0, make_pair(make_pair(posx, posy), make_pair(posx, posy))));
+        priority_queue<pair<pair<int, int>, pair<pair<int, int>, pair<int, int> > > > q3;
+        q3.push(make_pair(make_pair(0, 0), make_pair(make_pair(posx, posy), make_pair(posx, posy))));
         while(!q3.empty()) {
-            int dist=-q3.top().first;
+            int dist=-q3.top().first.first;
+            int pes=-q3.top().first.second;
             pair<int, int> to=q3.top().second.first;
             pair<int, int> from=q3.top().second.second;
             q3.pop();
@@ -157,8 +158,8 @@ virtual void play () {
                         presa=to;
                 }
                 for (int k=0; k<4; ++k) {
-                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<2 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
-                        q3.push(make_pair(-(dist+1), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
+                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<8 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
+                        q3.push(make_pair(make_pair(-(dist+1), -(pes+cost(cell(to.first+dirx[k], to.second+diry[k]).type))), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
             }
@@ -200,16 +201,16 @@ virtual void play () {
             }
             else {
                 int direccio2=-1;
-                int dir_cost=0;
+                int dir_cost=4;
                 for (int k=0; k<4; ++k) {
-                    if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                    if (puc(posx+dirx[k], posy+diry[k]) and puc_dir[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
                         direccio2=k;
                         dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
                     }
                 }
                 if (direccio2==-1) {
                     for (int k=0; k<4; ++k) {
-                        if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                        if (puc(posx+dirx[k], posy+diry[k]) and segurquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
                             direccio2=k;
                             dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
                         }
@@ -217,7 +218,7 @@ virtual void play () {
                 }
                 if (direccio2==-1) {
                     for (int k=0; k<4; ++k) {
-                        if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)>dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4)))) {
+                        if (puc(posx+dirx[k], posy+diry[k]) and segurissimquenopuc[k] and (cost(cell(posx+dirx[k], posy+diry[k]).type)<dir_cost or (cost(cell(posx+dirx[k], posy+diry[k]).type)==dir_cost and (k==(direccio+1)%4 or k==(direccio+3)%4))) and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player!=me())) {
                             direccio2=k;
                             dir_cost=cost(cell(posx+dirx[k], posy+diry[k]).type);
                         }
