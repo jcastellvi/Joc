@@ -169,7 +169,7 @@ virtual void play () {
                         presa=to;
                 }
                 for (int k=0; k<4; ++k) {
-                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<1 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
+                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<3 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
                         q3.push(make_pair(make_pair(-(dist+1), -(pes+cost(cell(to.first+dirx[k], to.second+diry[k]).type))), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
