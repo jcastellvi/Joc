@@ -43,6 +43,12 @@ bool puc(int x, int y) {
     return true;
 }
 
+/*
+int valor(int x, int y) {
+    int ret=0;
+    if (cell(x, y).unit_id == -1 or unit(cell(x, y).unit_id).player == me())
+}
+*/
 
 /**
 * Play method, invoked once per each round.
@@ -114,6 +120,7 @@ virtual void play () {
     
     
     while(not lenin.empty()) {
+        int perill=lenin.top().first;
         int posx=lenin.top().second.first;
         int posy=lenin.top().second.second;
         int vida=unit(cell(posx, posy).unit_id).health;
@@ -143,7 +150,7 @@ virtual void play () {
                 if (pas!=0 and c.type==PATH and cami.first==-1 and path_owner(c.path_id)!=me()) cami=to;
                 for (int k=0; k<4; ++k) {
                     if (puc(to.first+dirx[k], to.second+diry[k]) and dist1[to.first+dirx[k]][to.second+diry[k]].first.first==-1) {
-                        q.push(make_pair(make_pair(-(dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type)), make_pair(pas-1, -(cell(to.first+dirx[k], to.second+diry[k]).unit_id == -1 or unit(cell(to.first+dirx[k], to.second+diry[k]).unit_id).player == me() + mhi_moc[to.first+dirx[k]][to.second+diry[k]]))), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
+                        q.push(make_pair(make_pair(-(dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type)), make_pair(pas-1, -((cell(to.first+dirx[k], to.second+diry[k]).unit_id != -1 and unit(cell(to.first+dirx[k], to.second+diry[k]).unit_id).player == me()) + mhi_moc[to.first+dirx[k]][to.second+diry[k]]))), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
             }
@@ -219,7 +226,7 @@ virtual void play () {
                         presa=to;
                 }
                 for (int k=0; k<4; ++k) {
-                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<1 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
+                    if (puc(to.first+dirx[k], to.second+diry[k]) and dist<2 and dist3[to.first+dirx[k]][to.second+diry[k]].first==-1) {
                         q3.push(make_pair(make_pair(-(dist+1), -(pes+cost(cell(to.first+dirx[k], to.second+diry[k]).type))), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
@@ -257,7 +264,7 @@ virtual void play () {
                     if (posx+dirx[k]==ant.first and posy+diry[k]==ant.second)
                         direccio=k;
             }
-            if (puc3[direccio]) {
+            if (perill==0 or (puc3[direccio] and (not mhi_moc[posx+dirx[direccio]][posy+diry[direccio]]) and (cell(posx+dirx[direccio], posy+diry[direccio]).unit_id == -1 or unit(cell(posx+dirx[direccio], posy+diry[direccio]).unit_id).player != me()))) {
                 execute(Command(cell(posx, posy).unit_id, cap[direccio]));
                 mhi_moc[posx+dirx[direccio]][posy+diry[direccio]]=true;
             }
@@ -290,9 +297,12 @@ virtual void play () {
                         triar[k]+=50-10*cost(c.type);
                 }
                 
-                for (int k=0; k<4; ++k)
+                for (int k=0; k<4; ++k) {
                     if (triar[k]!=-1 and (k==(direccio+1)%4 or k==(direccio+3)%4))
                         triar[k]+=1;
+                    else if (triar[k]!=-1 and k==direccio)
+                        triar[k]+=5;
+                }
                 
                 int direccio=0;
                 for (int k=1; k<4; ++k)
