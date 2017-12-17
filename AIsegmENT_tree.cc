@@ -6,7 +6,7 @@
 * Write the name of your player and save this file
 * with the same name and .cc extension.
 */
-#define PLAYER_NAME segmENTtree
+#define PLAYER_NAME segmENT_tree
 
 
 struct PLAYER_NAME : public Player {
@@ -29,6 +29,7 @@ typedef vector<VI>  VVI;
 vector<vector<Cell> > mapa;
 vector<pair<int, int> > ent;
 vector<pair<int, int> > orc;
+vector<vector<bool> > mhi_moc;
 
 int dirx[4]={1, 0, -1, 0};
 int diry[4]={0, 1, 0, -1};
@@ -41,6 +42,14 @@ bool puc(int x, int y) {
     if (cell(x, y).type==WATER)
         return false;
     return true;
+}
+
+int voltant(int x, int y) {
+    int res=0;
+    for (int i=0; i<4; ++i)
+        if (puc(x+dirx[i], y+diry[i]) and !mhi_moc[x+dirx[i]][y+diry[i]] and (cell(x+dirx[i], y+diry[i]).unit_id == -1 or unit(cell(x+dirx[i], y+diry[i]).unit_id).player != me()))
+            ++res;
+    return res;
 }
 
 /*
@@ -60,7 +69,7 @@ virtual void play () {
     
     bool tot_meu=true;
     
-    vector<vector<bool> > mhi_moc(rows(), vector<bool> (cols(), false));
+    mhi_moc=vector<vector<bool> > (rows(), vector<bool> (cols(), false));
     
     for (int i=0; i<rows(); ++i)
         for (int j=0; j<cols(); ++j) {
@@ -136,21 +145,29 @@ virtual void play () {
         if (tot_meu) seguir=false;
         
         while(!q.empty() and seguir) {
-            int dist=-q.top().first.first;
-            int pas=q.top().first.second.first;
+            int dist=q.top().first.second.first;
+            int pas=q.top().first.second.second;
             pair<int, int> to=q.top().second.first;
             pair<int, int> from=q.top().second.second;
             q.pop();
             if (dist1[to.first][to.second].first.first==-1) {
                 dist1[to.first][to.second].first.first=dist;
-                dist1[to.first][to.second].first.second=dist1[from.first][from.second].first.second+1;
+                dist1[to.first][to.second].first.second=pas+1;
                 dist1[to.first][to.second].second=from;
                 Cell c=cell(to.first, to.second);
                 if (pas!=0 and c.type==CITY and ciutat.first==-1 and city_owner(c.city_id)!=me()) ciutat=to;
                 if (pas!=0 and c.type==PATH and cami.first==-1 and path_owner(c.path_id)!=me()) cami=to;
                 for (int k=0; k<4; ++k) {
                     if (puc(to.first+dirx[k], to.second+diry[k]) and dist1[to.first+dirx[k]][to.second+diry[k]].first.first==-1) {
-                        q.push(make_pair(make_pair(-(dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type)), make_pair(pas-1, -((cell(to.first+dirx[k], to.second+diry[k]).unit_id != -1 and unit(cell(to.first+dirx[k], to.second+diry[k]).unit_id).player == me()) + mhi_moc[to.first+dirx[k]][to.second+diry[k]]))), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
+                        int ndist=dist+cost(cell(to.first+dirx[k], to.second+diry[k]).type);
+                        int npas=pas+1;
+                        int sumar=0;
+                        if (pas==0) {
+                            if (!mhi_moc[posx+dirx[k]][posy+diry[k]] and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player != me()))
+                                sumar+=5;
+                            sumar+=4-voltant(posx+dirx[k], posy+diry[k]);
+                        }
+                        q.push(make_pair(make_pair(-(70*ndist+10*npas+sumar), make_pair(ndist, npas)), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
                     }
                 }
             }
@@ -289,7 +306,11 @@ virtual void play () {
                 }
                 for (int k=0; k<4; ++k)
                     if (triar[k]!=-1 and not mhi_moc[posx+dirx[k]][posy+diry[k]])
-                        triar[k]+=100;
+                        triar[k]+=200;
+
+                for (int k=0; k<4; ++k)
+                    if (triar[k]!=-1)
+                        triar[k]+=25*voltant(posx+dirx[k], posy+diry[k]);
                 
                 for (int k=0; k<4; ++k) {
                     Cell c=cell(posx+dirx[k], posy+diry[k]);
@@ -328,4 +349,3 @@ virtual void play () {
 * Do not modify the following line.
 */
 RegisterPlayer(PLAYER_NAME);
-
