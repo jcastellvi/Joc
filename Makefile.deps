@@ -4,6 +4,10 @@ AIDemo.o: AIDemo.cc Player.hh Info.hh Settings.hh Structs.hh Utils.hh \
  Defs.hh State.hh Action.hh Random.hh Registry.hh
 AINull.o: AINull.cc Player.hh Info.hh Settings.hh Structs.hh Utils.hh \
  Defs.hh State.hh Action.hh Random.hh Registry.hh
+AIPay_To_Gwyn.o: AIPay_To_Gwyn.cc Player.hh Info.hh Settings.hh \
+ Structs.hh Utils.hh Defs.hh State.hh Action.hh Random.hh Registry.hh
+AIPay_to_Gwyn.o: AIPay_to_Gwyn.cc Player.hh Info.hh Settings.hh \
+ Structs.hh Utils.hh Defs.hh State.hh Action.hh Random.hh Registry.hh
 AIobs.o: AIobs.cc Player.hh Info.hh Settings.hh Structs.hh Utils.hh \
  Defs.hh State.hh Action.hh Random.hh Registry.hh
 AIsegmENT_tree.o: AIsegmENT_tree.cc Player.hh Info.hh Settings.hh \

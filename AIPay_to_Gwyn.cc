@@ -6,7 +6,7 @@
 * Write the name of your player and save this file
 * with the same name and .cc extension.
 */
-#define PLAYER_NAME Pay_to_Gwyn
+#define PLAYER_NAME PAY_TO_GWYN
 
 
 struct PLAYER_NAME : public Player {
@@ -163,8 +163,10 @@ virtual void play () {
                         int npas=pas+1;
                         int sumar=0;
                         if (pas==0) {
-                            if (!mhi_moc[posx+dirx[k]][posy+diry[k]] and (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player != me()))
-                                sumar+=5;
+                            if (!mhi_moc[posx+dirx[k]][posy+diry[k]] or (cell(posx+dirx[k], posy+diry[k]).unit_id == -1 or unit(cell(posx+dirx[k], posy+diry[k]).unit_id).player != me()))
+                                sumar-=5;
+                            if (mhi_moc[posx+dirx[k]][posy+diry[k]])
+                                sumar+=1000000;
                             sumar+=4-voltant(posx+dirx[k], posy+diry[k]);
                         }
                         q.push(make_pair(make_pair(-(50*ndist+10*npas+sumar), make_pair(ndist, npas)), make_pair(make_pair(to.first+dirx[k], to.second+diry[k]), to)));
@@ -282,7 +284,10 @@ virtual void play () {
                     if (posx+dirx[k]==ant.first and posy+diry[k]==ant.second)
                         direccio=k;
             }
-            if (perill==0 or (puc3[direccio] and (not mhi_moc[posx+dirx[direccio]][posy+diry[direccio]]) and (cell(posx+dirx[direccio], posy+diry[direccio]).unit_id == -1 or unit(cell(posx+dirx[direccio], posy+diry[direccio]).unit_id).player != me()))) {
+            if (perill==0) {
+                execute(Command(cell(posx, posy).unit_id, cap[direccio]));
+            }
+            else if (puc3[direccio] and (not mhi_moc[posx+dirx[direccio]][posy+diry[direccio]]) and (cell(posx+dirx[direccio], posy+diry[direccio]).unit_id == -1 or unit(cell(posx+dirx[direccio], posy+diry[direccio]).unit_id).player != me())) {
                 execute(Command(cell(posx, posy).unit_id, cap[direccio]));
                 mhi_moc[posx+dirx[direccio]][posy+diry[direccio]]=true;
             }
